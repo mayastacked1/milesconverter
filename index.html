@@ -3,70 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Rewards Calculator</title>
+    <title>Agent Dashboard | Maya Black</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-zinc-950 text-zinc-100 min-h-screen p-6">
 
-    <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl space-y-6">
+    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
         
-        <div class="relative bg-gradient-to-br from-zinc-800 to-black p-6 rounded-xl border border-zinc-700/50 shadow-lg">
-            <h1 class="text-lg font-bold text-white">Maya Rewards Calculator</h1>
-            <p class="text-[10px] text-zinc-400 font-mono">1 Mile = ₱0.16 | Base: ₱40 = 1 Mile</p>
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl space-y-6">
+            <h1 class="text-lg font-bold text-white">Rewards Agent Calculator</h1>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase text-zinc-400">Customer Spend (PHP)</label>
+                    <input type="number" id="spend-input" class="w-full bg-zinc-950 border border-zinc-700 rounded py-2 px-3 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-zinc-400">Multiplier</label>
+                    <select id="multiplier-select" class="w-full bg-zinc-950 border border-zinc-700 rounded py-2 px-3 text-white">
+                        <option value="1">1x (Base)</option>
+                        <option value="2">2x (Preferred)</option>
+                        <option value="5">5x (Preferred)</option>
+                        <option value="10">10x (Max)</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <input type="number" id="custom-multiplier" placeholder="Enter custom x" class="hidden mt-2 w-full bg-zinc-950 border border-emerald-500 rounded py-2 px-3 text-emerald-400">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-zinc-400">Miles Earned</label>
+                    <input type="number" id="miles-input" class="w-full bg-zinc-950 border border-zinc-700 rounded py-2 px-3 text-white">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-800">
+                <div><p class="text-[9px] uppercase text-zinc-500">Cash Value</p><p class="text-lg font-bold text-emerald-400">₱<span id="cash-value">0.00</span></p></div>
+                <div><p class="text-[9px] uppercase text-zinc-500">Est. Spend</p><p class="text-lg font-bold text-white">₱<span id="est-spend">0.00</span></p></div>
+            </div>
         </div>
 
-        <div class="space-y-4">
-            <div>
-                <label class="block text-xs font-semibold uppercase text-zinc-400 mb-1">Customer Spend (PHP)</label>
-                <input type="number" id="spend-input" placeholder="0.00" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg py-2 px-3 text-white outline-none">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl space-y-6">
+            <h1 class="text-lg font-bold text-white">Finance Charge Calculator</h1>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase text-zinc-400">Loan Credit (PHP)</label>
+                    <input type="number" id="loan-credit" class="w-full bg-zinc-950 border border-zinc-700 rounded py-2 px-3 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-zinc-400">Partial Payment (PHP)</label>
+                    <input type="number" id="partial-payment" class="w-full bg-zinc-950 border border-zinc-700 rounded py-2 px-3 text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase text-zinc-400">Loan Term (Days)</label>
+                        <input type="number" id="loan-term" value="30" class="w-full bg-zinc-950 border border-zinc-700 rounded py-2 px-3 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-zinc-400">Days Held</label>
+                        <input type="number" id="days-held" value="20" class="w-full bg-zinc-950 border border-zinc-700 rounded py-2 px-3 text-white">
+                    </div>
+                </div>
             </div>
-
-            <div>
-                <label class="block text-xs font-semibold uppercase text-zinc-400 mb-1">Miles Earned</label>
-                <input type="number" id="miles-input" placeholder="0" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg py-2 px-3 text-white outline-none">
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-800">
-            <div class="bg-zinc-950 p-3 rounded-lg border border-zinc-800">
-                <p class="text-[9px] uppercase text-zinc-500 font-bold">Cash Value</p>
-                <p class="text-lg font-bold text-emerald-400">₱<span id="cash-value">0.00</span></p>
-            </div>
-            <div class="bg-zinc-950 p-3 rounded-lg border border-zinc-800">
-                <p class="text-[9px] uppercase text-zinc-500 font-bold">Est. Required Spend</p>
-                <p class="text-lg font-bold text-white">₱<span id="est-spend">0.00</span></p>
+            <div class="pt-4 border-t border-zinc-800">
+                <p class="text-xs uppercase text-zinc-500">Total Due (Remaining + Charge)</p>
+                <p class="text-2xl font-bold text-red-400">₱<span id="finance-charge-result">0.00</span></p>
             </div>
         </div>
     </div>
 
     <script>
+        // Rewards Logic
         const spendInput = document.getElementById('spend-input');
+        const multSelect = document.getElementById('multiplier-select');
+        const customMult = document.getElementById('custom-multiplier');
         const milesInput = document.getElementById('miles-input');
         const cashDisplay = document.getElementById('cash-value');
-        const spendDisplay = document.getElementById('est-spend');
+        const estSpendDisplay = document.getElementById('est-spend');
 
-        // Logic: 
-        // 1. Miles Earned = Spend / 40 (assuming 1x multiplier)
-        // 2. Cash Value = Miles * 0.16
-        
-        spendInput.addEventListener('input', () => {
+        function calcRewards() {
             const spend = parseFloat(spendInput.value) || 0;
-            const miles = spend / 40;
-            milesInput.value = miles.toFixed(2);
-            calculateRewards(miles, spend);
-        });
+            let mult = multSelect.value === 'custom' ? (parseFloat(customMult.value) || 1) : parseFloat(multSelect.value);
+            customMult.classList.toggle('hidden', multSelect.value !== 'custom');
+            
+            const miles = (spend / 40) * mult;
+            milesInput.value = spend > 0 ? miles.toFixed(2) : '';
+            cashDisplay.textContent = (miles * 0.16).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            estSpendDisplay.textContent = spend.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
 
+        // Finance Charge Logic (Updated to exact sequence)
+        function calcFinance() {
+            const loan = parseFloat(document.getElementById('loan-credit').value) || 0;
+            const partial = parseFloat(document.getElementById('partial-payment').value) || 0;
+            const term = parseFloat(document.getElementById('loan-term').value) || 30;
+            const held = parseFloat(document.getElementById('days-held').value) || 20;
+            
+            const remainingBalance = loan - partial;
+            // 3% of the FULL Loan Credit
+            const interestAmount = loan * 0.03;
+            // Divide by 30 days
+            const dailyRate = interestAmount / term;
+            // Multiply by days held
+            const totalCharge = dailyRate * held;
+            // Add remaining balance to the charge
+            const finalTotal = totalCharge + remainingBalance;
+            
+            document.getElementById('finance-charge-result').textContent = finalTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        spendInput.addEventListener('input', calcRewards);
+        multSelect.addEventListener('change', calcRewards);
+        customMult.addEventListener('input', calcRewards);
         milesInput.addEventListener('input', () => {
             const miles = parseFloat(milesInput.value) || 0;
-            const spend = miles * 40;
-            spendInput.value = spend.toFixed(2);
-            calculateRewards(miles, spend);
+            const mult = multSelect.value === 'custom' ? (parseFloat(customMult.value) || 1) : parseFloat(multSelect.value);
+            spendInput.value = miles > 0 ? ((miles * 40) / mult).toFixed(2) : '';
+            calcRewards();
         });
 
-        function calculateRewards(miles, spend) {
-            cashDisplay.textContent = (miles * 0.16).toLocaleString(undefined, {minimumFractionDigits: 2});
-            spendDisplay.textContent = spend.toLocaleString(undefined, {minimumFractionDigits: 2});
-        }
+        document.getElementById('loan-credit').addEventListener('input', calcFinance);
+        document.getElementById('partial-payment').addEventListener('input', calcFinance);
+        document.getElementById('loan-term').addEventListener('input', calcFinance);
+        document.getElementById('days-held').addEventListener('input', calcFinance);
     </script>
 </body>
 </html>
