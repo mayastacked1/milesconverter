@@ -11,7 +11,7 @@
     <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
         
         <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl space-y-6">
-            <h1 class="text-lg font-bold text-white">Maya Rewards Calculator</h1>
+            <h1 class="text-lg font-bold text-white">Maya Miles Calculator</h1>
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs uppercase text-zinc-400">Customer Spend (PHP)</label>
@@ -29,8 +29,8 @@
                     <input type="number" id="custom-multiplier" placeholder="Enter custom x" class="hidden mt-2 w-full bg-zinc-950 border border-emerald-500 rounded py-2 px-3 text-emerald-400">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase text-zinc-400">Miles Earned</label>
-                    <input type="number" id="miles-input" class="w-full bg-zinc-950 border border-zinc-700 rounded py-2 px-3 text-white">
+                    <label class="block text-xs uppercase text-zinc-400">Miles Earned (Can Custom)</label>
+                    <input type="number" id="miles-input" class="w-full bg-zinc-950 border border-emerald-500/50 rounded py-2 px-3 text-emerald-400">
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-800">
@@ -69,7 +69,7 @@
     </div>
 
     <script>
-        // Rewards Logic
+        // --- Rewards Logic ---
         const spendInput = document.getElementById('spend-input');
         const multSelect = document.getElementById('multiplier-select');
         const customMult = document.getElementById('custom-multiplier');
@@ -77,18 +77,39 @@
         const cashDisplay = document.getElementById('cash-value');
         const estSpendDisplay = document.getElementById('est-spend');
 
-        function calcRewards() {
+        function getMult() {
+            return multSelect.value === 'custom' ? (parseFloat(customMult.value) || 1) : parseFloat(multSelect.value);
+        }
+
+        // Triggered when user changes spend
+        spendInput.addEventListener('input', () => {
             const spend = parseFloat(spendInput.value) || 0;
-            let mult = multSelect.value === 'custom' ? (parseFloat(customMult.value) || 1) : parseFloat(multSelect.value);
-            customMult.classList.toggle('hidden', multSelect.value !== 'custom');
-            
+            const mult = getMult();
             const miles = (spend / 40) * mult;
-            milesInput.value = spend > 0 ? miles.toFixed(2) : '';
+            milesInput.value = miles > 0 ? miles.toFixed(2) : '';
+            updateRewardsDisplays(miles, spend);
+        });
+
+        // Triggered when user manually edits miles
+        milesInput.addEventListener('input', () => {
+            const miles = parseFloat(milesInput.value) || 0;
+            const mult = getMult();
+            const spend = (miles * 40) / mult;
+            spendInput.value = spend > 0 ? spend.toFixed(2) : '';
+            updateRewardsDisplays(miles, spend);
+        });
+
+        function updateRewardsDisplays(miles, spend) {
             cashDisplay.textContent = (miles * 0.16).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
             estSpendDisplay.textContent = spend.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
-        // Finance Charge Logic (Updated to exact sequence)
+        multSelect.addEventListener('change', () => {
+            customMult.classList.toggle('hidden', multSelect.value !== 'custom');
+            spendInput.dispatchEvent(new Event('input'));
+        });
+
+        // --- Finance Charge Logic ---
         function calcFinance() {
             const loan = parseFloat(document.getElementById('loan-credit').value) || 0;
             const partial = parseFloat(document.getElementById('partial-payment').value) || 0;
@@ -96,32 +117,17 @@
             const held = parseFloat(document.getElementById('days-held').value) || 20;
             
             const remainingBalance = loan - partial;
-            // 3% of the FULL Loan Credit
             const interestAmount = loan * 0.03;
-            // Divide by 30 days
             const dailyRate = interestAmount / term;
-            // Multiply by days held
             const totalCharge = dailyRate * held;
-            // Add remaining balance to the charge
             const finalTotal = totalCharge + remainingBalance;
             
             document.getElementById('finance-charge-result').textContent = finalTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
-        spendInput.addEventListener('input', calcRewards);
-        multSelect.addEventListener('change', calcRewards);
-        customMult.addEventListener('input', calcRewards);
-        milesInput.addEventListener('input', () => {
-            const miles = parseFloat(milesInput.value) || 0;
-            const mult = multSelect.value === 'custom' ? (parseFloat(customMult.value) || 1) : parseFloat(multSelect.value);
-            spendInput.value = miles > 0 ? ((miles * 40) / mult).toFixed(2) : '';
-            calcRewards();
+        ['loan-credit', 'partial-payment', 'loan-term', 'days-held'].forEach(id => {
+            document.getElementById(id).addEventListener('input', calcFinance);
         });
-
-        document.getElementById('loan-credit').addEventListener('input', calcFinance);
-        document.getElementById('partial-payment').addEventListener('input', calcFinance);
-        document.getElementById('loan-term').addEventListener('input', calcFinance);
-        document.getElementById('days-held').addEventListener('input', calcFinance);
     </script>
 </body>
 </html>
