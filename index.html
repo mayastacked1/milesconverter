@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maya Black Card Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl space-y-6">
+        
+        <div class="relative bg-gradient-to-br from-zinc-800 to-black p-6 rounded-xl border border-zinc-700/50 shadow-lg overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+            <div class="flex justify-between items-start mb-8">
+                <span class="text-xs tracking-widest text-zinc-400 font-mono uppercase">Maya Black Rewards</span>
+                <span class="text-emerald-400 font-bold tracking-wider text-sm">MILES</span>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-zinc-300 to-zinc-500 bg-clip-text text-transparent">
+                Rewards Converter
+            </h1>
+            <p class="text-[10px] text-zinc-500 font-mono mt-1">Rate: 1 Mile = ₱0.16</p>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <label for="pesos" class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">
+                    Amount in Pesos (PHP)
+                </label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-medium">₱</span>
+                    <input 
+                        type="number" 
+                        id="pesos" 
+                        placeholder="0.00" 
+                        class="w-full bg-zinc-950 border border-zinc-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl py-3 pl-9 pr-4 text-white outline-none font-mono transition-all"
+                    >
+                </div>
+            </div>
+
+            <div class="flex justify-center my-2">
+                <div class="bg-zinc-800 p-2 rounded-full text-zinc-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                    </svg>
+                </div>
+            </div>
+
+            <div>
+                <label for="miles" class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">
+                    Maya Miles Balance
+                </label>
+                <div class="relative">
+                    <input 
+                        type="number" 
+                        id="miles" 
+                        placeholder="0" 
+                        class="w-full bg-zinc-950 border border-zinc-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl py-3 px-4 text-white outline-none font-mono transition-all"
+                    >
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 text-xs tracking-wider uppercase font-medium">Miles</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-zinc-950/50 rounded-xl p-4 border border-zinc-800/60 text-xs text-zinc-400 space-y-1.5 font-mono">
+            <div class="flex justify-between">
+                <span>Standard Cash Value:</span>
+                <span class="text-zinc-200" id="summary-rate">1 Mile = ₱0.16</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pesosInput = document.getElementById('pesos');
+        const milesInput = document.getElementById('miles');
+        const CONVERSION_RATE = 0.16;
+
+        // When typing in Pesos, calculate Miles
+        pesosInput.addEventListener('input', () => {
+            const pesos = parseFloat(pesosInput.value);
+            if (!isNaN(pesos) && pesos >= 0) {
+                // Pesos divided by 0.16 gives the number of miles needed
+                const miles = pesos / CONVERSION_RATE;
+                // Round to 2 decimal places for user readability
+                milesInput.value = Number(miles.toFixed(2));
+            } else {
+                milesInput.value = '';
+            }
+        });
+
+        // When typing in Miles, calculate Pesos
+        milesInput.addEventListener('input', () => {
+            const miles = parseFloat(milesInput.value);
+            if (!isNaN(miles) && miles >= 0) {
+                // Miles multiplied by 0.16 gives cash value
+                const pesos = miles * CONVERSION_RATE;
+                pesosInput.value = Number(pesos.toFixed(2));
+            } else {
+                pesosInput.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
